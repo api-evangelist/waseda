@@ -1,0 +1,42 @@
+---
+name: Waseda University
+description: Waseda University public developer/API footprint review for APIs.json cataloging.
+url: https://raw.githubusercontent.com/api-evangelist/waseda/refs/heads/main/review.yml
+created: '2026-06-03'
+modified: '2026-06-03'
+reviews:
+  - date: '2026-06-03'
+    rating: 2
+    summary: >-
+      No dedicated Waseda developer portal or published OpenAPI specs were found.
+      The strongest confirmed, live, machine-readable interface is the institutional
+      repository OAI-PMH 2.0 endpoint (verified Identify response). The WINE library
+      discovery service runs on Ex Libris Primo/Alma (institution code 81SOKEI_WUNI)
+      whose Primo/SRU APIs exist but require institutional credentials and are not
+      openly documented by Waseda. Shibboleth SAML SSO is live but federation-only.
+      There is no single official university GitHub org; only lab/student orgs exist,
+      and the unofficial WasedaTime backend (api.wasedatime.com) returns 403 with no
+      public docs. Ratings reflect this no-fabrication discipline: only endpoints
+      probed live are reported.
+    endpoints:
+      - url: https://waseda.repo.nii.ac.jp/oai?verb=Identify
+        status: 200
+        note: Confirmed OAI-PMH 2.0; repository name "Waseda University Repository".
+      - url: https://waseda.primo.exlibrisgroup.com
+        status: 200
+        note: Ex Libris Primo discovery host for WINE (inst code 81SOKEI_WUNI).
+      - url: https://www.waseda.jp/top/en/
+        status: 200
+        note: Official English website, live.
+      - url: https://iaidp.ia.waseda.jp/idp/shibboleth
+        status: 200
+        note: Shibboleth SAML IdP endpoint reachable; federation use only.
+      - url: https://github.com/wasedatime
+        status: 200
+        note: Unofficial student GitHub org (WasedaTime); not an official university org.
+      - url: https://api.wasedatime.com
+        status: 403
+        note: Unofficial community backend; reachable but gated, no public docs.
+      - url: https://www.linkedin.com/school/wasedauniversity/
+        status: 999
+        note: Official LinkedIn school page; 999 is LinkedIn bot blocking, page exists.
