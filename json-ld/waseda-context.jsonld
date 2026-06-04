@@ -1,0 +1,64 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "oai": "http://www.openarchives.org/OAI/2.0/",
+    "waseda": "https://www.waseda.jp/vocab/",
+    "@vocab": "https://www.waseda.jp/vocab/",
+
+    "name": "schema:name",
+    "alternateName": "schema:alternateName",
+    "url": "schema:url",
+    "description": "schema:description",
+    "email": "schema:email",
+    "logo": "schema:logo",
+    "sameAs": "schema:sameAs",
+
+    "University": "schema:CollegeOrUniversity",
+    "Library": "schema:Library",
+    "Service": "schema:Service",
+
+    "repository": {
+      "@id": "waseda:repository",
+      "@type": "@id"
+    },
+    "baseURL": "oai:baseURL",
+    "protocolVersion": "oai:protocolVersion",
+    "adminEmail": "oai:adminEmail",
+    "granularity": "oai:granularity",
+
+    "title": "dc:title",
+    "creator": "dc:creator",
+    "subject": "dc:subject",
+    "publisher": "dc:publisher",
+    "date": "dc:date",
+    "type": "dc:type",
+    "identifier": "dc:identifier",
+    "language": "dc:language",
+    "rights": "dc:rights"
+  },
+  "@type": "University",
+  "name": "Waseda University",
+  "alternateName": "早稲田大学",
+  "url": "https://www.waseda.jp/top/en/",
+  "description": "A leading private research university in Tokyo, Japan, whose public machine-readable footprint centers on scholarly infrastructure: an OAI-PMH 2.0 institutional repository, an Ex Libris Primo/Alma library discovery service, and Shibboleth SAML SSO.",
+  "sameAs": [
+    "https://github.com/wasedatime",
+    "https://www.linkedin.com/school/wasedauniversity/"
+  ],
+  "department": {
+    "@type": "Library",
+    "name": "Waseda University Library (WINE Discovery)",
+    "url": "https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE"
+  },
+  "repository": {
+    "@type": "Service",
+    "name": "Waseda University Repository (OAI-PMH)",
+    "url": "https://waseda.repo.nii.ac.jp/",
+    "baseURL": "https://waseda.repo.nii.ac.jp/oai",
+    "protocolVersion": "2.0",
+    "adminEmail": "repository@list.waseda.jp",
+    "granularity": "YYYY-MM-DDThh:mm:ssZ"
+  }
+}
