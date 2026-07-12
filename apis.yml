@@ -72,6 +72,8 @@ apis:
       - type: Documentation
         url: https://www.waseda.jp/navi/e/mywaseda/about.html
 common:
+  - type: DomainSecurity
+    url: security/waseda-domain-security.yml
   - type: Website
     url: https://www.waseda.jp/top/en/
   - type: GitHub

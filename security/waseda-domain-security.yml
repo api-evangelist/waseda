@@ -1,0 +1,33 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.waseda.jp
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 19 22:11:59 2026 GMT
+  hsts: false
+- host: waseda.repo.nii.ac.jp
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Apr  3 09:33:58 2027 GMT
+  hsts: true
+  hsts_max_age: 31556926
+- host: waseda.primo.exlibrisgroup.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 13 23:59:59 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+domains:
+- domain: waseda.jp
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none
+- domain: nii.ac.jp
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false
