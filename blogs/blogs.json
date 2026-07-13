@@ -4,11 +4,12 @@
     {
       "source": "https://www.waseda.jp/top/en/news",
       "feed_url": "https://www.waseda.jp/top/en/news",
-      "title": "News – Waseda University",
+      "title": "News \u2013 Waseda University",
       "saved": 0,
-      "method": "none"
+      "method": "none",
+      "error": "parse_failed"
     }
   ],
   "post_count": 0,
-  "fetched": "2026-06-03T00:00:00Z"
+  "fetched": "2026-07-11T11:43:46Z"
 }
