@@ -66,7 +66,18 @@ apis:
       institutional credentials and is not openly documented by Waseda. The public
       discovery UI is confirmed live.
     humanURL: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
-    tags: [ Library, Discovery, Primo, Alma, ExLibris ]
+    tags:
+    - Library
+    - Discovery
+    - Primo
+    - Alma
+    - Ex Libris
+    tags_raw:
+    - Library
+    - Discovery
+    - Primo
+    - Alma
+    - ExLibris
     properties:
       - type: Documentation
         url: https://waseda-jp.libguides.com/winehelp_en
