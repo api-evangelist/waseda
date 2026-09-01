@@ -1,121 +1,361 @@
 ---
 aid: waseda
 name: Waseda University
+x-type: university
+x-category: Private Research University
 description: >-
-  Waseda University is a leading private research university in Tokyo, Japan,
-  ranked #181 in the QS World University Rankings 2025. Its public, machine-readable
-  developer footprint is centered on scholarly infrastructure rather than a
-  dedicated developer portal: the Waseda University Repository exposes an OAI-PMH 2.0
-  metadata interface (hosted on the NII WEKO/JAIRO Cloud), and the library's WINE
-  discovery service runs on the Ex Libris Primo/Alma platform (institution code
-  81SOKEI_WUNI), which provides standard Primo and SRU interfaces. Identity is
-  handled via Shibboleth SAML SSO. There is no single official Waseda University
-  GitHub organization; an unofficial student project (WasedaTime) operates a
-  community syllabus/timetable backend that is not publicly documented.
+  Waseda University is a large private research university in Shinjuku, Tokyo, founded in 1882 and one
+  of Japan's two best-known private institutions. It operates no developer portal, publishes no
+  OpenAPI, and has no official GitHub organization — but it is not the empty profile that description
+  usually implies, because three genuinely institution-operated machine-readable surfaces sit under
+  its own domains and answer anonymous calls. Waseda runs its own IIIF server at
+  iiif.archive.waseda.jp, serving IIIF Presentation 2.1 manifests and IIIF Image API 2.0 level-1
+  endpoints for the Kotenseki Sogo Database of classical Japanese books and the Waseda Cultural
+  Resources Database — a real, callable cultural-heritage API on Waseda's engineering. It runs its own
+  Shibboleth SAML 2.0 identity provider at iaidp.ia.waseda.jp, whose entityID is registered in the
+  GakuNin federation operated by NII and propagated onward to eduGAIN. And Waseda Moodle at
+  wsdmoodle.waseda.jp is a live LTI 1.3 / LTI Advantage platform publishing a JWKS keyset, an OAuth 2.0
+  client-credentials token endpoint and an LTI services endpoint, alongside a token-gated Moodle Web
+  Services REST endpoint. Its other apparent APIs are not its own: the Waseda University Repository's
+  OAI-PMH 2.0 endpoint is real and its content is Waseda's, but it runs on NII's JAIRO Cloud, and the
+  WINE library discovery service is an Ex Libris Primo tenancy whose Primo and Alma SRU interfaces are
+  not enabled for public use. Waseda is registered in ROR (00ntfnx83) and holds Crossref Open Funder
+  Registry ID 501100004423, but is not a Crossref depositing member and holds no DataCite account.
 type: Index
 deliveryModel:
   model: saas
   open_source: false
-  commercial: true
-  callable_host: false
+  commercial: false
+  callable_host: true
   label: Hosted service · you call their endpoint
-  confidence: medium
+  confidence: high
   source:
-  - pricing
-  generated: '2026-08-28'
-  method: derived
+  - probed
+  generated: '2026-09-01'
+  method: probed
 accessModel:
   pricing: free
-  onboarding: unknown
+  onboarding: none
   trial: false
-  try_now: false
-  public: false
-  label: Free
-  confidence: medium
+  try_now: true
+  public: partial
+  label: Free and anonymous for IIIF and repository harvesting; campus systems are credentialed
+  confidence: high
   source:
-  - plans
-  generated: '2026-07-22'
-  method: derived
-position: Consumer
-access: 3rd-Party
+  - probed
+  generated: '2026-09-01'
+  method: probed
+position: Provider
+access: 1st-Party
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/waseda.png
 url: https://raw.githubusercontent.com/api-evangelist/waseda/refs/heads/main/apis.yml
 tags:
-  - Education
-  - Higher Education
   - University
+  - Higher Education
+  - Education
+  - Japan
+  - Asia
+  - Private Research University
   - Research
   - Library
   - Open Access
-  - Japan
+  - Cultural Heritage
+  - Digital Archives
+  - IIIF
+  - Identity Federation
+  - Learning Management
+  - Research Repository
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 specificationVersion: '0.23'
+x-coverage:
+  state: covered
+  reason: covered
+  detail: >-
+    Waseda was fully reachable and the re-profile found more institution-operated surface than the
+    June 2026 pass did, not less. Three Waseda-operated machine-readable surfaces were verified by
+    anonymous probe: the IIIF Image and Presentation servers at iiif.archive.waseda.jp (200,
+    application/ld+json and application/json), the Shibboleth SAML 2.0 IdP metadata at
+    iaidp.ia.waseda.jp (200, application/xml, entityID confirmed present in the GakuNin federation
+    aggregate), and the Waseda Moodle LTI 1.3 platform at wsdmoodle.waseda.jp (JWKS 200, token
+    endpoint 400 invalid_request, services endpoint 405, Web Services REST 200 with an invalidtoken
+    fault body). The IIIF surface and the LTI platform are both new to this profile. Two vendor
+    tenancies are recorded as relationships with x-operator tenant and no vendor contract was saved
+    under Waseda's name: the repository OAI-PMH endpoint on NII's JAIRO Cloud and the WINE discovery
+    service on Ex Libris Primo, whose Alma SRU is not enabled (404 SERVICE_NOT_FOUND on both plausible
+    institution codes). Two registry memberships are recorded and evidenced, ROR and the Crossref Open
+    Funder Registry; DataCite returned meta.total 0 and is recorded as absent rather than assumed.
+    Two limits are worth stating. www.waseda.jp answers /robots.txt, /llms.txt and
+    /.well-known/security.txt with a 403 WAF page rather than a 404, so those are unreadable rather
+    than confirmed absent. And Waseda has no official GitHub organization — github.com/wasedatime is
+    an unaffiliated student project whose backend api.wasedatime.com returns 403 with no public
+    documentation and no evidence of institutional endorsement, so it is not credited here and the
+    stale GitHub pointer that claimed it was removed.
+  evidence:
+    - url: https://iiif.archive.waseda.jp/iiif/manifest/ktnsk/ho04_02555/manifest.json
+      status: 200
+    - url: https://iiif.archive.waseda.jp/iiif/image/ktnsk/ho04_02555/ho04_02555_a001/info.json
+      status: 200
+    - url: https://iaidp.ia.waseda.jp/idp/shibboleth
+      status: 200
+    - url: https://metadata.gakunin.nii.ac.jp/gakunin-metadata.xml
+      status: 200
+    - url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+      status: 200
+    - url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+      status: 400
+    - url: https://wsdmoodle.waseda.jp/mod/lti/services.php
+      status: 405
+    - url: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+      status: 200
+    - url: https://waseda.repo.nii.ac.jp/oai?verb=Identify
+      status: 200
+    - url: https://waseda.repo.nii.ac.jp/oai?verb=ListMetadataFormats
+      status: 200
+    - url: https://api-ap.hosted.exlibrisgroup.com/view/sru/81SOKEI_INST?version=1.2&operation=explain
+      status: 404
+    - url: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
+      status: 200
+    - url: https://api.ror.org/v2/organizations/00ntfnx83
+      status: 200
+    - url: https://api.crossref.org/funders/501100004423
+      status: 200
+    - url: https://api.datacite.org/providers?query=Waseda
+      status: 200
+    - url: https://api.wasedatime.com
+      status: 403
+    - url: https://www.waseda.jp/robots.txt
+      status: 403
 apis:
+  - aid: waseda:iiif-presentation
+    name: Waseda IIIF Presentation API (Cultural Resources)
+    x-operator: institution
+    description: >-
+      Waseda University operates its own IIIF server for the Kotenseki Sogo Database (古典籍総合データベース)
+      of classical Japanese books and the Waseda Cultural Resources Database (文化資源データベース). It serves
+      IIIF Presentation API 2.1 manifests as application/json — sc:Manifest documents carrying label,
+      metadata, attribution "早稲田大学図書館 (Waseda University Library)", a license pointer to Waseda's own
+      image-use terms, and a sequence of sc:Canvas each wired to the Image API service. Anonymous, no
+      credential, no rate-limit signal advertised. This is the clearest piece of Waseda-authored
+      machine-readable infrastructure in the profile.
+    humanURL: https://www.wul.waseda.ac.jp/kotenseki/ga_IIIF/about_iiif.html
+    baseURL: https://iiif.archive.waseda.jp/iiif/manifest
+    tags: [ IIIF, Cultural Heritage, Digital Archives, Library, Metadata, JSON-LD ]
+    properties:
+      - type: Documentation
+        url: https://www.wul.waseda.ac.jp/kotenseki/ga_IIIF/about_iiif.html
+      - type: Specification
+        url: https://iiif.io/api/presentation/2.1/
+      - type: TermsOfService
+        url: https://www.waseda.jp/library/user/using-images/
+      - type: Examples
+        url: examples/waseda-examples.yml
+  - aid: waseda:iiif-image
+    name: Waseda IIIF Image API
+    x-operator: institution
+    description: >-
+      The image-tile half of the same Waseda-operated IIIF deployment. info.json declares protocol
+      http://iiif.io/api/image at Image API 2.0 compliance level 1, 256x256 tiles with scale factors
+      to 512, five precomputed sizes, jpg format and native/color/gray qualities. Requests follow the
+      standard IIIF path template
+      /iiif/image/{collection}/{item}/{image}/{region}/{size}/{rotation}/{quality}.{format}. Served
+      as application/ld+json, anonymous.
+    humanURL: https://www.wul.waseda.ac.jp/kotenseki/ga_IIIF/about_iiif.html
+    baseURL: https://iiif.archive.waseda.jp/iiif/image
+    tags: [ IIIF, Images, Cultural Heritage, Digital Archives, JSON-LD ]
+    properties:
+      - type: Documentation
+        url: https://www.wul.waseda.ac.jp/kotenseki/ga_IIIF/about_iiif.html
+      - type: Specification
+        url: https://iiif.io/api/image/2.0/
+      - type: Examples
+        url: examples/waseda-examples.yml
+  - aid: waseda:shibboleth-idp
+    name: Waseda Identity Provider (Shibboleth SAML 2.0)
+    x-operator: institution
+    description: >-
+      Waseda operates its own Shibboleth SAML 2.0 identity provider. The metadata document is served
+      anonymously as application/xml and declares entityID https://iaidp.ia.waseda.jp/idp/shibboleth,
+      shibmd:Scope waseda.jp, SAML2 Redirect / POST / POST-SimpleSign SSO and SLO endpoints, and
+      SAML1/SAML2 SOAP ArtifactResolution and AttributeQuery on port 8443. This is machine-readable
+      institution-operated identity infrastructure, not a public API — a relying party reaches it by
+      registering a Service Provider in the federation, not by obtaining a key.
+    humanURL: https://support.waseda.jp/it/s/
+    baseURL: https://iaidp.ia.waseda.jp/idp/shibboleth
+    tags: [ Identity, SSO, Shibboleth, SAML, Authentication, Federation ]
+    properties:
+      - type: Documentation
+        url: https://support.waseda.jp/it/s/
+      - type: Authentication
+        url: authentication/waseda-authentication.yml
+      - type: Conformance
+        url: conformance/waseda-conformance.yml
+  - aid: waseda:gakunin-federation
+    name: GakuNin Academic Access Federation membership
+    x-operator: federation
+    description: >-
+      Waseda's identity provider is registered in GakuNin (学術認証フェデレーション), the Japanese academic
+      identity federation operated by the National Institute of Informatics, and reaches eduGAIN
+      through it. The entityID https://iaidp.ia.waseda.jp/idp/shibboleth was confirmed present in the
+      GakuNin operational metadata aggregate on 2026-09-01, carrying OrganizationDisplayName
+      "Waseda University". A federation is shared by definition and the aggregate is NII's; the IdP
+      inside it is Waseda's. Recorded as a membership, never as a Waseda contract.
+    humanURL: https://www.gakunin.jp/participants
+    baseURL: https://metadata.gakunin.nii.ac.jp/gakunin-metadata.xml
+    tags: [ Identity Federation, GakuNin, eduGAIN, SAML, Shibboleth, NII ]
+    properties:
+      - type: Documentation
+        url: https://www.gakunin.jp/
+      - type: Conformance
+        url: conformance/waseda-conformance.yml
+  - aid: waseda:moodle-lti
+    name: Waseda Moodle — LTI 1.3 / LTI Advantage platform
+    x-operator: institution
+    description: >-
+      Waseda Moodle runs on Waseda's own host and is a live LTI 1.3 learning-tools-interoperability
+      platform. It publishes a JWKS keyset anonymously (one RSA/RS256 key, kid ea841dc4e7af7463cc4c),
+      an OIDC third-party-initiated login endpoint, an OAuth 2.0 client-credentials token endpoint
+      that returns a correctly shaped invalid_request error to an empty call, and an LTI Advantage
+      services endpoint that rejects GET with a structured 405. Tool registration is administrative;
+      there is no self-service developer path. The LTI implementation is Moodle's engineering — what
+      is Waseda's is the deployment, the host and the signing key.
+    humanURL: https://wsdmoodle.waseda.jp/
+    baseURL: https://wsdmoodle.waseda.jp/mod/lti
+    tags: [ LTI, Learning Management, Moodle, OAuth2, JWKS, Education Technology ]
+    properties:
+      - type: Authentication
+        url: authentication/waseda-authentication.yml
+      - type: Conformance
+        url: conformance/waseda-conformance.yml
+      - type: Specification
+        url: https://www.imsglobal.org/spec/lti/v1p3
+      - type: Examples
+        url: examples/waseda-examples.yml
+  - aid: waseda:moodle-webservices
+    name: Waseda Moodle Web Services (REST)
+    x-operator: institution
+    description: >-
+      The Moodle Web Services REST endpoint is deployed on Waseda's own host and answers an anonymous
+      call with Moodle's structured invalidtoken fault. Access requires a per-user token issued by a
+      Waseda Moodle administrator; there is no public issuance path and no published function list.
+      Note that the endpoint returns HTTP 200 with the fault in the body, so a status-code-only check
+      will misread it as an open API.
+    humanURL: https://wsdmoodle.waseda.jp/
+    baseURL: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+    tags: [ Moodle, Learning Management, REST, Education Technology ]
+    properties:
+      - type: Authentication
+        url: authentication/waseda-authentication.yml
+      - type: Examples
+        url: examples/waseda-examples.yml
   - aid: waseda:repository-oai
     name: Waseda University Repository (OAI-PMH)
+    x-operator: tenant
     description: >-
-      OAI-PMH 2.0 metadata harvesting endpoint for the Waseda University
-      institutional repository, hosted on the NII WEKO/JAIRO Cloud platform.
-      Exposes journal articles, dissertations, bulletin papers, working papers,
-      and conference proceedings as harvestable Dublin Core / JPCOAR metadata.
-      Verified Identify response reports repository name "Waseda University
-      Repository", protocol version 2.0, and admin contact repository@list.waseda.jp.
+      OAI-PMH 2.0 metadata harvesting for the Waseda University Repository. The collection, the
+      administrative contact (repository@list.waseda.jp) and the identity are Waseda's; the host and
+      the WEKO3 software are NII's JAIRO Cloud, so the operator is tenant and no contract is saved
+      under Waseda's name. Identify confirms protocolVersion 2.0, earliestDatestamp 2016-07-05,
+      deletedRecord transient, granularity to the second. Seven metadata formats are served —
+      jpcoar_2.0, jpcoar_1.0, jpcoar, jpcoar_v1, oai_dc, ddi and lom — a configured JPCOAR deployment.
+      The endpoint answers a plain client with 200 and a desktop-browser User-Agent with 406; that is
+      a content-negotiation quirk on NII's nginx, not an outage.
     humanURL: https://waseda.repo.nii.ac.jp/
     baseURL: https://waseda.repo.nii.ac.jp/oai
-    tags: [ Repository, OAI-PMH, Open Access, Research, Metadata ]
+    tags: [ Repository, OAI-PMH, Open Access, Research, Metadata, JPCOAR ]
     properties:
       - type: Documentation
         url: https://www.openarchives.org/OAI/openarchivesprotocol.html
+      - type: Conformance
+        url: conformance/waseda-conformance.yml
+      - type: Examples
+        url: examples/waseda-examples.yml
   - aid: waseda:wine-primo
-    name: WINE Library Discovery (Ex Libris Primo)
+    name: WINE Library Discovery (Ex Libris Primo tenancy)
+    x-operator: tenant
     description: >-
-      Waseda University Library's discovery service (WINE) runs on the Ex Libris
-      Primo/Alma platform, institution code 81SOKEI_WUNI. The underlying Primo
-      platform supports programmatic search via the Primo Search/PNX REST API and
-      Alma supports SRU; access to these interfaces is governed by Ex Libris
-      institutional credentials and is not openly documented by Waseda. The public
-      discovery UI is confirmed live.
+      Waseda University Library's discovery service, WINE, is an Ex Libris Primo VE tenancy under
+      institution code 81SOKEI_WUNI. The discovery UI is live and is Waseda's service, but it is Ex
+      Libris's engineering and Ex Libris's contract. The Primo Search REST and Alma SRU interfaces
+      that exist as platform capabilities are not enabled for public use here: SRU explain requests
+      against both plausible institution codes return 404 SERVICE_NOT_FOUND. Recorded as a tenancy
+      relationship only; no Ex Libris contract is saved under Waseda.
     humanURL: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
-    tags:
-    - Library
-    - Discovery
-    - Primo
-    - Alma
-    - Ex Libris
+    tags: [ Library, Discovery, Primo, Alma, Ex Libris ]
     tags_raw:
-    - Library
-    - Discovery
-    - Primo
-    - Alma
-    - ExLibris
+      - Library
+      - Discovery
+      - Primo
+      - Alma
+      - ExLibris
     properties:
       - type: Documentation
         url: https://waseda-jp.libguides.com/winehelp_en
-  - aid: waseda:shibboleth-sso
-    name: Waseda Identity Provider (Shibboleth SAML SSO)
+      - type: Authentication
+        url: authentication/waseda-authentication.yml
+  - aid: waseda:ror-registration
+    name: ROR registration (Research Organization Registry)
+    x-operator: registry
     description: >-
-      Waseda's institutional single sign-on is provided through a Shibboleth SAML
-      Identity Provider, used to authenticate access to MyWaseda and federated
-      services. The IdP metadata/SSO endpoint is reachable but intended for
-      federated service providers, not general public API consumption.
-    humanURL: https://www.waseda.jp/navi/e/mywaseda/about.html
-    baseURL: https://iaidp.ia.waseda.jp/idp/shibboleth
-    tags: [ Identity, SSO, Shibboleth, SAML, Authentication ]
+      Waseda University is registered in the Research Organization Registry as
+      https://ror.org/00ntfnx83 — established 1882, types education and funder, with external
+      identifiers GRID grid.5290.e, ISNI 0000 0004 1936 9975, Wikidata Q274486 and Crossref Funder ID
+      501100004423. A registry membership is a fact about the institution, machine-readable through
+      the registry's own API. The registry's contract belongs to ROR, not to Waseda.
+    humanURL: https://ror.org/00ntfnx83
+    baseURL: https://api.ror.org/v2/organizations/00ntfnx83
+    tags: [ Registry, ROR, Persistent Identifiers, Research ]
     properties:
-      - type: Documentation
-        url: https://www.waseda.jp/navi/e/mywaseda/about.html
+      - type: Examples
+        url: examples/waseda-examples.yml
+  - aid: waseda:crossref-funder
+    name: Crossref Open Funder Registry membership
+    x-operator: registry
+    description: >-
+      Waseda University holds Crossref Open Funder Registry ID 501100004423, located in Japan, with
+      1,458 works attributed and two descendant funder identifiers (501100006539, 501100018983).
+      Waseda is in the Funder Registry only — a Crossref members query for "waseda" returns zero
+      results, so Waseda is not a Crossref DOI-depositing member. Both facts are recorded so neither
+      is over-read.
+    humanURL: https://www.crossref.org/services/funder-registry/
+    baseURL: https://api.crossref.org/funders/501100004423
+    tags: [ Registry, Crossref, Funder Registry, Persistent Identifiers, Research ]
+    properties:
+      - type: Examples
+        url: examples/waseda-examples.yml
 common:
-  - type: DomainSecurity
-    url: security/waseda-domain-security.yml
   - type: Website
     url: https://www.waseda.jp/top/en/
-  - type: GitHub
-    url: https://github.com/wasedatime
+  - type: PrivacyPolicy
+    url: https://www.waseda.jp/top/en/privacy-policy
   - type: LinkedIn
     url: https://www.linkedin.com/school/wasedauniversity/
-  - type: Authentication
+  - type: Support
+    url: https://support.waseda.jp/it/s/
+  - type: IdentityFederation
     url: https://iaidp.ia.waseda.jp/idp/shibboleth
+  - type: ResearchRepository
+    url: https://waseda.repo.nii.ac.jp/
+  - type: LibraryCatalog
+    url: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
+  - type: CourseCatalog
+    url: https://www.wsl.waseda.jp/syllabus/JAA101.php
+  - type: OpenData
+    url: https://archive.waseda.jp/archive/
+  - type: AIPolicy
+    url: https://www.waseda.jp/top/news/89507?lng=en
+  - type: Documentation
+    url: https://www.wul.waseda.ac.jp/kotenseki/ga_IIIF/about_iiif.html
+  - type: TermsOfService
+    url: https://www.waseda.jp/library/user/using-images/
+  - type: Authentication
+    url: authentication/waseda-authentication.yml
+  - type: Conformance
+    url: conformance/waseda-conformance.yml
+  - type: Examples
+    url: examples/waseda-examples.yml
+  - type: DomainSecurity
+    url: security/waseda-domain-security.yml
   - type: Plans
     url: plans/waseda-plans-pricing.yml
   - type: RateLimits
