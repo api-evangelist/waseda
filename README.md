@@ -64,52 +64,141 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Waseda University is a leading private research university in Tokyo, Japan, ranked #181 in the QS World University Rankings 2025. This repository catalogs Waseda's public, machine-readable developer/API footprint as an [APIs.json](https://apisjson.org) profile. Waseda does not operate a dedicated developer portal; its confirmed footprint is centered on scholarly infrastructure — an OAI-PMH institutional repository, an Ex Libris Primo/Alma library discovery service (WINE), and Shibboleth SAML single sign-on.
+Waseda University is a large private research university in Shinjuku, Tokyo, founded in 1882. This
+repository catalogs Waseda's public, machine-readable footprint as an [APIs.json](https://apisjson.org)
+profile, under the API Evangelist **university pipeline** — which settles *who operates* each surface
+before saving anything, because a university is a federation of buyers and most of what appears under
+its name is a vendor's contract.
+
+Waseda operates no developer portal, publishes no OpenAPI, and has no official GitHub organization.
+It is not, however, an empty profile: three genuinely institution-operated machine-readable surfaces
+sit under Waseda's own domains and answer anonymous or structured calls.
 
 - APIs.json: https://raw.githubusercontent.com/api-evangelist/waseda/refs/heads/main/apis.yml
 - Run with Naftiko: https://github.com/naftiko/fleet?utm_source=api-evangelist&utm_medium=readme&utm_campaign=waseda-api-evangelist&utm_content=repo
 
 ## Type
 
-Index / Consumer / 3rd-Party
+University / Private Research University · Index / Provider / 1st-Party
 
 ## Tags
 
-Education, Higher Education, University, Research, Library, Open Access, Japan
+University, Higher Education, Education, Japan, Asia, Private Research University, Research, Library,
+Open Access, Cultural Heritage, Digital Archives, IIIF, Identity Federation, Learning Management,
+Research Repository
 
-## APIs
+## Surfaces, by operator
 
-- **Waseda University Repository (OAI-PMH)** — OAI-PMH 2.0 metadata harvesting for the institutional repository (NII WEKO/JAIRO Cloud). Base URL: `https://waseda.repo.nii.ac.jp/oai`. Docs: https://www.openarchives.org/OAI/openarchivesprotocol.html
-- **WINE Library Discovery (Ex Libris Primo)** — Library discovery on Ex Libris Primo/Alma (institution code 81SOKEI_WUNI); Primo/SRU APIs exist but are credentialed and not openly documented. Docs: https://waseda-jp.libguides.com/winehelp_en
-- **Waseda Identity Provider (Shibboleth SAML SSO)** — Institutional SAML single sign-on. Endpoint: `https://iaidp.ia.waseda.jp/idp/shibboleth`. Docs: https://www.waseda.jp/navi/e/mywaseda/about.html
+Every entry carries an `x-operator`. `method:` says how we came to hold an artifact; `x-operator:`
+says who runs the thing it describes.
 
-## Plans
+### institution — Waseda's own
 
-See [plans/waseda-plans-pricing.yml](plans/waseda-plans-pricing.yml).
+- **Waseda IIIF Presentation API** — `https://iiif.archive.waseda.jp/iiif/manifest` · IIIF
+  Presentation 2.1 `sc:Manifest` documents for the Kotenseki Sogo Database (古典籍総合データベース) and the
+  Waseda Cultural Resources Database (文化資源データベース). Anonymous, `application/json`, attribution
+  "早稲田大学図書館 (Waseda University Library)".
+- **Waseda IIIF Image API** — `https://iiif.archive.waseda.jp/iiif/image` · Image API 2.0 compliance
+  level 1, 256×256 tiles, `application/ld+json`.
+- **Waseda Identity Provider (Shibboleth SAML 2.0)** — `https://iaidp.ia.waseda.jp/idp/shibboleth` ·
+  live metadata, `shibmd:Scope waseda.jp`, SAML2 Redirect / POST / POST-SimpleSign SSO and SLO.
+- **Waseda Moodle — LTI 1.3 / LTI Advantage platform** — `https://wsdmoodle.waseda.jp/mod/lti` ·
+  JWKS keyset (200), OAuth 2.0 client-credentials token endpoint (400 `invalid_request`), LTI services
+  endpoint (405), OIDC login endpoint (200).
+- **Waseda Moodle Web Services (REST)** — `https://wsdmoodle.waseda.jp/webservice/rest/server.php` ·
+  token-gated. Returns **HTTP 200 with an `invalidtoken` fault in the body** — a status-code-only
+  check would misread this as an open API.
 
-## Rate Limits
+### federation
 
-See [rate-limits/waseda-rate-limits.yml](rate-limits/waseda-rate-limits.yml).
+- **GakuNin (学術認証フェデレーション)** — Waseda's IdP entityID is registered in NII's operational
+  federation aggregate and reaches eduGAIN through it. A federation is shared by definition; the IdP
+  inside it is Waseda's.
 
-## FinOps
+### tenant — Waseda's data, someone else's contract
 
-See [finops/waseda-finops.yml](finops/waseda-finops.yml).
+- **Waseda University Repository (OAI-PMH 2.0)** — `https://waseda.repo.nii.ac.jp/oai` · seven
+  metadata formats including JPCOAR 2.0, DDI and IEEE LOM. The collection and the admin contact
+  (`repository@list.waseda.jp`) are Waseda's; the host and the WEKO3 software are NII's JAIRO Cloud.
+- **WINE Library Discovery** — Ex Libris Primo VE tenancy, institution code `81SOKEI_WUNI`. Alma SRU
+  is **not** enabled (404 `SERVICE_NOT_FOUND`), so the previously recorded "Primo/SRU interfaces
+  exist" claim is unverifiable and has been re-stated as such.
+
+### registry — memberships, not contracts
+
+- **ROR** — https://ror.org/00ntfnx83 (established 1882; GRID `grid.5290.e`, ISNI `0000 0004 1936 9975`,
+  Wikidata `Q274486`).
+- **Crossref Open Funder Registry** — `501100004423`, 1,458 works. Waseda is in the Funder Registry
+  only; a Crossref *members* query returns zero, so it is not a DOI-depositing member.
+- **DataCite** — no account. `api.datacite.org/providers?query=Waseda` returns `meta.total: 0`.
+
+## Domain standard conformance (Kin Score `education` regime)
+
+Reward-only, established by live credential-free probe — see
+[conformance/waseda-conformance.yml](conformance/waseda-conformance.yml).
+
+| Standard | Status | Operator |
+|---|---|---|
+| `lti` | conformant (1.3 / Advantage) | institution |
+| `saml` | conformant (2.0) | institution |
+| `shibboleth` | conformant | institution |
+| `oai-pmh` | conformant (2.0) | tenant |
+| `crossref` | registered (Funder Registry) | registry |
+| `scim`, `oneroster`, `ed-fi`, `caliper`, `qti`, `orcid`, `datacite` | not found | — |
+
+Also evidenced outside the regime list: IIIF Image API 2.0, IIIF Presentation API 2.1, OAuth 2.0
+client-credentials, RFC 7517 JWKS, ROR.
+
+## Artifacts
+
+- [conformance/waseda-conformance.yml](conformance/waseda-conformance.yml) — `method: probed`
+- [authentication/waseda-authentication.yml](authentication/waseda-authentication.yml) — `method: probed`
+- [examples/waseda-examples.yml](examples/waseda-examples.yml) — `method: probed`, verbatim captures
+- [plans/waseda-plans-pricing.yml](plans/waseda-plans-pricing.yml) ·
+  [rate-limits/waseda-rate-limits.yml](rate-limits/waseda-rate-limits.yml) ·
+  [finops/waseda-finops.yml](finops/waseda-finops.yml) ·
+  [security/waseda-domain-security.yml](security/waseda-domain-security.yml)
+
+There is **no `openapi/` directory** and that is deliberate. Waseda publishes no OpenAPI. The IIIF,
+LTI, SAML and OAI-PMH surfaces are deployments of open standards whose contracts belong to those
+standards bodies, not to Waseda — generating a spec from them would credit Waseda with engineering it
+did not do, which is exactly the failure this pipeline exists to prevent.
 
 ## Timestamps
 
 - Created: 2026-06-03
-- Modified: 2026-06-03
+- Modified: 2026-09-01
 
 ## Common Properties
 
 - Website: https://www.waseda.jp/top/en/
-- GitHub (unofficial student org): https://github.com/wasedatime
+- Privacy Policy: https://www.waseda.jp/top/en/privacy-policy
+- Support / IT Service Portal: https://support.waseda.jp/it/s/
+- Identity Federation: https://iaidp.ia.waseda.jp/idp/shibboleth
+- Research Repository: https://waseda.repo.nii.ac.jp/
+- Library Catalog (WINE): https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
+- Course Catalog (syllabus search): https://www.wsl.waseda.jp/syllabus/JAA101.php
+- Open Data / Cultural Resources Database: https://archive.waseda.jp/archive/
+- AI Policy: https://www.waseda.jp/top/news/89507?lng=en
+- Image use terms: https://www.waseda.jp/library/user/using-images/
 - LinkedIn: https://www.linkedin.com/school/wasedauniversity/
-- Authentication: https://iaidp.ia.waseda.jp/idp/shibboleth
 
 ## Notes
 
-All entries reflect a no-fabrication review: only URLs probed live on 2026-06-03 are reported. No dedicated Waseda developer portal or published OpenAPI specifications were found. The OAI-PMH endpoint was verified via a live Identify response. The WINE/Primo and Shibboleth interfaces are real platform capabilities but are not openly documented for general public API consumption. There is no single official Waseda University GitHub organization; only lab and student project orgs (e.g., WasedaTime, nlp-waseda, ogata-lab) exist. The unofficial WasedaTime backend (`api.wasedatime.com`) is reachable but returns 403 and has no public documentation.
+- **No official GitHub organization.** `github.com/wasedatime` is an unaffiliated student project; its
+  backend `api.wasedatime.com` returns 403 with no public documentation and no evidence of
+  institutional endorsement. The previous `GitHub` pointer claiming it has been removed, because a
+  student surface on a non-institution domain is a tenant relationship at best and this one is not
+  even that. `nlp-waseda` and `ogata-lab` are individual lab organizations, not the university's.
+- **`waseda.repo.nii.ac.jp` bot-blocks browsers.** The whole host returns 406 Not Acceptable to a
+  desktop-browser User-Agent and 200 to a plain client. That is a content-negotiation quirk on NII's
+  nginx, not an outage — a naive liveness check will report it dead.
+- **`www.waseda.jp` returns 403, not 404, for `/robots.txt`, `/llms.txt` and
+  `/.well-known/security.txt`.** Those are recorded as *unreadable*, not as confirmed absent.
+- **`researchers.waseda.jp` timed out** at 60 seconds on 2026-09-01 and is not emitted as a pointer.
+  The live researcher database is `https://w-rdb.waseda.jp/` (institution-operated, HTML only).
+- No fabrication: every endpoint above was probed live on 2026-09-01 and every status code is recorded
+  in [review.yml](review.yml) and in the `x-coverage` block of `apis.yml`.
 
 ## Maintainers
 

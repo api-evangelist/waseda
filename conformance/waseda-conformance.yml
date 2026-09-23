@@ -1,0 +1,237 @@
+---
+name: Waseda University — Domain Standard Conformance
+description: >-
+  Education-regime standard conformance for Waseda University, established by live, credential-free
+  probe of Waseda-operated hosts on 2026-09-01. Reward-only: a standard appears as conformant only
+  where an anonymous request returned a response that proves the deployment. Education-regime
+  standards with no evidence are listed under not_found rather than left implicit. Each entry carries
+  the operator of the host the evidence came from, because for a university those are frequently not
+  the same party that runs the institution.
+generated: '2026-09-01'
+method: probed
+source: >-
+  live probes of wsdmoodle.waseda.jp, iaidp.ia.waseda.jp, iiif.archive.waseda.jp,
+  metadata.gakunin.nii.ac.jp, waseda.repo.nii.ac.jp, api.ror.org and api.crossref.org on 2026-09-01
+x-operator: institution
+url: https://raw.githubusercontent.com/api-evangelist/waseda/main/conformance/waseda-conformance.yml
+regime: education
+
+conformance:
+  - standard: lti
+    status: conformant
+    version: 1.3 / LTI Advantage
+    operator: institution
+    evidence:
+      url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+      status: 200
+      content_type: application/json
+      location: keys[0]
+      value: '{"kty":"RSA","alg":"RS256","kid":"ea841dc4e7af7463cc4c","e":"AQAB","n":"zIRco8Mp…"}'
+      detail: >-
+        Waseda Moodle publishes a live JWKS keyset at the LTI 1.3 platform keyset URL, served
+        anonymously as application/json with one RSA/RS256 signing key. This is the strongest
+        machine-readable LTI evidence a platform can emit and it is on Waseda's own host.
+    supporting:
+      - url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+        status: 400
+        content_type: text/html
+        value: '{ "error" : "invalid_request" }'
+        detail: >-
+          The LTI Advantage OAuth 2.0 client-credentials token endpoint is live and answers an
+          empty request with a correctly shaped RFC 6749 error object rather than a 404.
+      - url: https://wsdmoodle.waseda.jp/mod/lti/auth.php
+        status: 200
+        content_type: text/html
+        detail: OIDC third-party-initiated login / authorization endpoint for the LTI platform is live.
+      - url: https://wsdmoodle.waseda.jp/mod/lti/services.php
+        status: 405
+        content_type: application/json
+        value: '{"status":405,"reason":"Method Not Allowed","request":{"method":"GET","url":"/mod/lti/services.php"}}'
+        detail: >-
+          The LTI Advantage service endpoint (Names and Role Provisioning / Assignment and Grade
+          Services) is deployed and rejects GET with a structured JSON error — a live service, not
+          a missing route.
+    note: >-
+      This is a Moodle deployment, so the LTI implementation is Moodle's engineering, not Waseda's.
+      What is Waseda's is the operation: the platform runs on wsdmoodle.waseda.jp under Waseda's own
+      registrable domain, with Waseda's own signing key. Recorded as an institution-operated
+      deployment of a standard, never as a Waseda-authored contract.
+
+  - standard: oai-pmh
+    status: conformant
+    version: '2.0'
+    operator: tenant
+    evidence:
+      url: https://waseda.repo.nii.ac.jp/oai?verb=Identify
+      status: 200
+      content_type: text/xml; charset=utf-8
+      location: OAI-PMH/Identify/protocolVersion
+      value: '2.0'
+      detail: >-
+        repositoryName "Waseda University Repository", baseURL https://waseda.repo.nii.ac.jp/oai,
+        adminEmail repository@list.waseda.jp, earliestDatestamp 2016-07-05T00:00:00Z,
+        deletedRecord transient, granularity YYYY-MM-DDThh:mm:ssZ.
+    supporting:
+      - url: https://waseda.repo.nii.ac.jp/oai?verb=ListMetadataFormats
+        status: 200
+        location: OAI-PMH/ListMetadataFormats/metadataFormat/metadataPrefix
+        value: jpcoar_1.0, jpcoar, jpcoar_2.0, oai_dc, ddi, jpcoar_v1, lom
+        detail: >-
+          Seven metadata formats, including JPCOAR 2.0 (the Japanese national repository profile),
+          DDI and IEEE LOM — a configured JPCOAR deployment, not a bare default.
+      - url: https://waseda.repo.nii.ac.jp/oai?verb=ListSets
+        status: 200
+        detail: ListSets returns a populated set hierarchy.
+    note: >-
+      The repository content, admin contact and identity are Waseda's; the host and the WEKO3
+      software are NII's JAIRO Cloud. Operator recorded as tenant for that reason. The endpoint
+      returns 406 to a browser User-Agent and 200 to a plain client — a content-negotiation quirk
+      on NII's nginx, not an outage.
+
+  - standard: saml
+    status: conformant
+    version: '2.0'
+    operator: institution
+    evidence:
+      url: https://iaidp.ia.waseda.jp/idp/shibboleth
+      status: 200
+      content_type: application/xml;charset=utf-8
+      location: md:EntityDescriptor/@entityID
+      value: https://iaidp.ia.waseda.jp/idp/shibboleth
+      detail: >-
+        SAML 2.0 IdP metadata served anonymously (14,577 bytes). Declares SAML2 Redirect, POST and
+        POST-SimpleSign SSO and SLO endpoints, SAML1/SAML2 SOAP ArtifactResolution and AttributeQuery
+        on port 8443, and shibmd:Scope regexp="false" waseda.jp.
+    supporting:
+      - url: https://metadata.gakunin.nii.ac.jp/gakunin-metadata.xml
+        status: 200
+        content_type: application/samlmetadata+xml
+        location: md:EntitiesDescriptor/md:EntityDescriptor/@entityID
+        value: https://iaidp.ia.waseda.jp/idp/shibboleth
+        detail: >-
+          Waseda's entityID is present in the GakuNin (学術認証フェデレーション) operational federation
+          aggregate, carrying OrganizationDisplayName "Waseda University". GakuNin is operated by
+          NII and feeds eduGAIN.
+
+  - standard: shibboleth
+    status: conformant
+    operator: institution
+    evidence:
+      url: https://iaidp.ia.waseda.jp/idp/shibboleth
+      status: 200
+      location: md:EntityDescriptor/md:Extensions/shibmd:Scope
+      value: waseda.jp
+      detail: >-
+        The metadata carries the Shibboleth-specific shibmd:Scope extension and the Shibboleth
+        SSO profile endpoint https://iaidp.ia.waseda.jp/idp/profile/Shibboleth/SSO, identifying a
+        Shibboleth Identity Provider rather than a generic SAML IdP. Host is under waseda.jp.
+
+  - standard: crossref
+    status: registered
+    operator: registry
+    evidence:
+      url: https://api.crossref.org/funders/501100004423
+      status: 200
+      location: message.id
+      value: '501100004423'
+      detail: >-
+        Waseda University holds Crossref Open Funder Registry ID 501100004423 (location Japan,
+        1,458 works attributed, two descendant funder IDs 501100006539 and 501100018983). This is a
+        registry membership — a fact about Waseda — not a Waseda-operated contract.
+    supporting:
+      - url: https://api.crossref.org/members?query=waseda
+        status: 200
+        value: 'total-results: 0'
+        detail: >-
+          Waseda is NOT a Crossref DOI-depositing member. It is in the Funder Registry only. Both
+          facts are recorded so neither is over-read.
+
+not_found:
+  - standard: datacite
+    detail: >-
+      https://api.datacite.org/providers?query=Waseda returned meta.total 0 on 2026-09-01. No
+      DataCite provider or repository account is registered under Waseda's name. Japanese
+      institutional repositories on JAIRO Cloud typically mint DOIs through JaLC (Japan Link
+      Center) rather than DataCite; no JaLC-registered prefix could be evidenced from the OAI
+      records within this run, so nothing is claimed.
+  - standard: orcid
+    detail: >-
+      No Waseda ORCID member integration, ORCID-enabled repository claim, or public ORCID
+      organizational record was evidenced by anonymous probe.
+  - standard: scim
+    detail: No SCIM /Users or /ServiceProviderConfig endpoint was found on any Waseda-operated host.
+  - standard: oneroster
+    detail: No OneRoster endpoint was found; Waseda's roster flow is Japanese-domestic and internal.
+  - standard: ed-fi
+    detail: Ed-Fi is a US K-12/state-agency standard and is not applicable to a Japanese private university.
+  - standard: caliper
+    detail: >-
+      No Caliper Analytics event store or endpoint was exposed by the Moodle deployment to an
+      anonymous caller. Moodle can emit Caliper via plugin; nothing evidenced it here.
+  - standard: qti
+    detail: No QTI import/export or delivery endpoint was reachable anonymously.
+
+other_standards:
+  - standard: iiif-image-api
+    status: conformant
+    version: 2.0 (level 1)
+    operator: institution
+    evidence:
+      url: https://iiif.archive.waseda.jp/iiif/image/ktnsk/ho04_02555/ho04_02555_a001/info.json
+      status: 200
+      content_type: application/ld+json
+      location: profile[0]
+      value: http://iiif.io/api/image/2/level1.json
+      detail: >-
+        Waseda operates its own IIIF Image server. info.json declares protocol
+        http://iiif.io/api/image, tile size 256x256 with scaleFactors up to 512, five precomputed
+        sizes, and formats/qualities. Host iiif.archive.waseda.jp is under waseda.jp.
+  - standard: iiif-presentation-api
+    status: conformant
+    version: '2.1'
+    operator: institution
+    evidence:
+      url: https://iiif.archive.waseda.jp/iiif/manifest/ktnsk/ho04_02555/manifest.json
+      status: 200
+      content_type: application/json
+      location: '@context'
+      value: http://iiif.io/api/presentation/2/context.json
+      detail: >-
+        sc:Manifest for 玉篇 [書写資料] 卷第9, attribution "早稲田大学図書館 (Waseda University Library)",
+        license https://www.waseda.jp/library/user/using-images/, one sequence of sc:Canvas each
+        wired to the Image API service above. Serves the Kotenseki Sogo Database and the Waseda
+        Cultural Resources Database.
+  - standard: oauth2
+    status: conformant
+    version: 2.0 client_credentials
+    operator: institution
+    evidence:
+      url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+      status: 400
+      value: '{ "error" : "invalid_request" }'
+      detail: LTI Advantage token endpoint implements the OAuth 2.0 client-credentials grant with a signed JWT assertion.
+  - standard: rfc7517-jwks
+    status: conformant
+    operator: institution
+    evidence:
+      url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+      status: 200
+      detail: A JSON Web Key Set with one RSA key, kid ea841dc4e7af7463cc4c, alg RS256.
+  - standard: ror
+    status: registered
+    operator: registry
+    evidence:
+      url: https://api.ror.org/v2/organizations/00ntfnx83
+      status: 200
+      location: id
+      value: https://ror.org/00ntfnx83
+      detail: >-
+        Waseda University, established 1882, types [education, funder]. External identifiers
+        GRID grid.5290.e, ISNI 0000 0004 1936 9975, Wikidata Q274486, Fundref 501100004423.
+
+certifications_published: []
+certifications_note: >-
+  No SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP or CSA STAR claim was found on any Waseda host. This
+  is normal for the cohort and is not read as a gap. www.waseda.jp answers /.well-known/security.txt,
+  /robots.txt and /llms.txt with a 403 WAF page rather than a 404, so the absence of RFC 9116 and
+  llms.txt is recorded as unreadable rather than as a confirmed negative.

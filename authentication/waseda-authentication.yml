@@ -1,0 +1,148 @@
+---
+name: Waseda University — Authentication
+description: >-
+  How Waseda University's machine-readable surfaces authenticate. Three regimes are in play and they
+  belong to different operators. Waseda's own Shibboleth SAML 2.0 identity provider fronts browser
+  sign-in to campus services and is federation infrastructure rather than an API credential. Waseda
+  Moodle exposes two credentialed programmatic doors on Waseda's own host — LTI 1.3 / LTI Advantage
+  over OAuth 2.0 client credentials, and the Moodle Web Services REST endpoint over a per-user token.
+  Against that, Waseda's read surfaces — the institutional repository's OAI-PMH endpoint and the
+  Waseda IIIF image and manifest servers — are fully anonymous and need no credential at all.
+generated: '2026-09-01'
+method: probed
+source: >-
+  live unauthenticated probes of wsdmoodle.waseda.jp, iaidp.ia.waseda.jp, iiif.archive.waseda.jp and
+  waseda.repo.nii.ac.jp on 2026-09-01. No credentials of any kind were used or attempted.
+x-operator: institution
+url: https://raw.githubusercontent.com/api-evangelist/waseda/main/authentication/waseda-authentication.yml
+
+mechanisms:
+  - id: shibboleth-saml-sso
+    type: saml2
+    label: Waseda Shibboleth SAML 2.0 single sign-on
+    operator: institution
+    entity_id: https://iaidp.ia.waseda.jp/idp/shibboleth
+    scope: waseda.jp
+    endpoints:
+      - binding: HTTP-Redirect
+        purpose: SSO
+        url: https://iaidp.ia.waseda.jp/idp/profile/SAML2/Redirect/SSO
+      - binding: HTTP-POST
+        purpose: SSO
+        url: https://iaidp.ia.waseda.jp/idp/profile/SAML2/POST/SSO
+      - binding: HTTP-POST-SimpleSign
+        purpose: SSO
+        url: https://iaidp.ia.waseda.jp/idp/profile/SAML2/POST-SimpleSign/SSO
+      - binding: SOAP
+        purpose: AttributeQuery
+        url: https://iaidp.ia.waseda.jp:8443/idp/profile/SAML2/SOAP/AttributeQuery
+      - binding: SOAP
+        purpose: ArtifactResolution
+        url: https://iaidp.ia.waseda.jp:8443/idp/profile/SAML2/SOAP/ArtifactResolution
+    federation:
+      name: GakuNin (学術認証フェデレーション)
+      operator: National Institute of Informatics (NII)
+      metadata: https://metadata.gakunin.nii.ac.jp/gakunin-metadata.xml
+      onward: eduGAIN
+    onboarding: >-
+      Not a public API credential. A relying party obtains access by registering a Service Provider
+      in the GakuNin federation, at which point Waseda's IdP is reachable through the federation
+      metadata. Individuals authenticate with a Waseda ID through MyWaseda.
+    method: probed
+    source: https://iaidp.ia.waseda.jp/idp/shibboleth
+
+  - id: lti13-client-credentials
+    type: oauth2
+    flow: client_credentials
+    label: Waseda Moodle — LTI 1.3 / LTI Advantage service credentials
+    operator: institution
+    token_url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+    authorization_url: https://wsdmoodle.waseda.jp/mod/lti/auth.php
+    jwks_url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+    service_url: https://wsdmoodle.waseda.jp/mod/lti/services.php
+    assertion: >-
+      client_assertion_type urn:ietf:params:oauth:client-assertion-type:jwt-bearer — the tool signs a
+      JWT with its own key and the platform verifies it, per the IMS Global Security Framework.
+    scopes_note: >-
+      LTI Advantage scopes (Names and Role Provisioning, Assignment and Grade Services, Deep Linking)
+      are negotiated per registered tool. No scope list is published anonymously, so none is asserted here.
+    observed:
+      - url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+        status: 400
+        body: '{ "error" : "invalid_request" }'
+      - url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+        status: 200
+        body_note: JWKS with one RSA/RS256 key, kid ea841dc4e7af7463cc4c
+      - url: https://wsdmoodle.waseda.jp/mod/lti/services.php
+        status: 405
+        body: '{"status":405,"reason":"Method Not Allowed"}'
+    onboarding: >-
+      Tool registration is an administrative act inside Waseda Moodle; there is no self-service
+      developer portal and no public registration URL was found.
+    method: probed
+    source: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+
+  - id: moodle-webservice-token
+    type: apiKey
+    in: query
+    parameter_names:
+      - wstoken
+    label: Waseda Moodle Web Services — REST token
+    operator: institution
+    endpoint: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+    observed:
+      - url: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+        status: 200
+        content_type: application/xml; charset=utf-8
+        body: '<EXCEPTION class="core\exception\moodle_exception"><ERRORCODE>invalidtoken</ERRORCODE>…'
+        detail: >-
+          The endpoint is deployed and answers an anonymous call with Moodle's structured invalidtoken
+          fault rather than a 404 or a login redirect. Note the HTTP status is 200 — the failure is in
+          the body, so status alone would misread this as an open API.
+    onboarding: >-
+      Tokens are issued per user by a Waseda Moodle administrator. No public issuance path exists.
+    method: probed
+    source: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+
+  - id: anonymous-read
+    type: none
+    label: Anonymous read — repository harvesting and IIIF
+    operator: mixed
+    applies_to:
+      - Waseda University Repository OAI-PMH (operator tenant, host waseda.repo.nii.ac.jp)
+      - Waseda IIIF Presentation and Image APIs (operator institution, host iiif.archive.waseda.jp)
+    detail: >-
+      Both answer credential-free GETs with complete payloads. The OAI-PMH endpoint additionally
+      content-negotiates: a browser User-Agent draws 406 from NII's nginx while a plain client gets
+      200, which is a client-shape quirk rather than an access control.
+    method: probed
+    source: https://waseda.repo.nii.ac.jp/oai?verb=Identify
+
+  - id: primo-credentialed
+    type: unknown
+    label: Ex Libris Primo / Alma programmatic interfaces (WINE)
+    operator: tenant
+    detail: >-
+      Waseda's WINE discovery service runs on Ex Libris Primo VE. The Primo Search REST and Alma SRU
+      interfaces exist as Ex Libris platform capabilities but are not enabled or documented publicly
+      for Waseda: https://api-ap.hosted.exlibrisgroup.com/view/sru/81SOKEI_INST and the WUNI variant
+      both return 404 SERVICE_NOT_FOUND. Recorded as unknown rather than asserted, and the contract
+      belongs to Ex Libris in any case.
+    observed:
+      - url: https://api-ap.hosted.exlibrisgroup.com/view/sru/81SOKEI_INST?version=1.2&operation=explain
+        status: 404
+      - url: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
+        status: 200
+        detail: Primo single-page-application shell; a UI, not an API response.
+    method: probed
+    source: https://api-ap.hosted.exlibrisgroup.com/view/sru/81SOKEI_INST?version=1.2&operation=explain
+
+summary:
+  types:
+    - saml2
+    - oauth2
+    - apiKey
+    - none
+  public_anonymous_surfaces: 2
+  credentialed_surfaces: 3
+  self_service_key_issuance: false

@@ -3,7 +3,7 @@ name: Waseda University
 description: Waseda University public developer/API footprint review for APIs.json cataloging.
 url: https://raw.githubusercontent.com/api-evangelist/waseda/refs/heads/main/review.yml
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 reviews:
   - date: '2026-06-03'
     rating: 2
@@ -40,3 +40,95 @@ reviews:
       - url: https://www.linkedin.com/school/wasedauniversity/
         status: 999
         note: Official LinkedIn school page; 999 is LinkedIn bot blocking, page exists.
+  - date: '2026-09-01'
+    rating: 3
+    summary: >-
+      Re-profiled under the API Evangelist university pipeline, which settles WHO OPERATES each
+      surface before saving anything. The June 2026 pass recorded three surfaces and read Waseda as a
+      pure consumer; a full re-probe found more institution-operated surface than that, not less.
+      Waseda runs its own IIIF server at iiif.archive.waseda.jp — IIIF Presentation API 2.1 manifests
+      and IIIF Image API 2.0 level-1 info.json, both anonymous — behind the Kotenseki Sogo Database of
+      classical books and the Waseda Cultural Resources Database. Waseda Moodle at
+      wsdmoodle.waseda.jp is a live LTI 1.3 / LTI Advantage platform: JWKS 200, OAuth 2.0
+      client-credentials token endpoint 400 invalid_request, LTI services 405, Moodle Web Services
+      REST 200 with an invalidtoken fault body. The Shibboleth SAML 2.0 IdP at iaidp.ia.waseda.jp
+      serves live metadata and its entityID is present in the GakuNin federation aggregate, reaching
+      eduGAIN. Two surfaces were re-labelled as tenancies rather than Waseda contracts: the repository
+      OAI-PMH endpoint runs on NII JAIRO Cloud, and WINE is an Ex Libris Primo tenancy whose Alma SRU
+      is not enabled (404 SERVICE_NOT_FOUND). Two registry memberships were evidenced (ROR 00ntfnx83,
+      Crossref Funder Registry 501100004423); DataCite returned zero and is recorded as absent. The
+      stale GitHub pointer to github.com/wasedatime was removed — it is an unaffiliated student
+      project, not a Waseda organization, and its backend returns 403 with no public documentation.
+    endpoints:
+      - url: https://iiif.archive.waseda.jp/iiif/manifest/ktnsk/ho04_02555/manifest.json
+        status: 200
+        note: IIIF Presentation 2.1 sc:Manifest, attribution "Waseda University Library". Institution-operated.
+      - url: https://iiif.archive.waseda.jp/iiif/image/ktnsk/ho04_02555/ho04_02555_a001/info.json
+        status: 200
+        note: IIIF Image API 2.0 level1, application/ld+json. Institution-operated.
+      - url: https://wsdmoodle.waseda.jp/mod/lti/certs.php
+        status: 200
+        note: LTI 1.3 platform JWKS, one RSA/RS256 key. Institution-operated.
+      - url: https://wsdmoodle.waseda.jp/mod/lti/token.php
+        status: 400
+        note: 'LTI Advantage OAuth 2.0 token endpoint, live: {"error":"invalid_request"}.'
+      - url: https://wsdmoodle.waseda.jp/mod/lti/services.php
+        status: 405
+        note: LTI Advantage services endpoint live; rejects GET with structured JSON.
+      - url: https://wsdmoodle.waseda.jp/webservice/rest/server.php
+        status: 200
+        note: Moodle Web Services REST — HTTP 200 but an invalidtoken fault in the body. Not an open API.
+      - url: https://iaidp.ia.waseda.jp/idp/shibboleth
+        status: 200
+        note: SAML 2.0 IdP metadata, entityID + shibmd:Scope waseda.jp. Institution-operated.
+      - url: https://metadata.gakunin.nii.ac.jp/gakunin-metadata.xml
+        status: 200
+        note: Waseda entityID confirmed present in the GakuNin federation aggregate (onward to eduGAIN).
+      - url: https://waseda.repo.nii.ac.jp/oai?verb=Identify
+        status: 200
+        note: >-
+          OAI-PMH 2.0 Identify confirmed. Host is NII JAIRO Cloud, so operator is tenant. Returns 406
+          to a browser User-Agent and 200 to a plain client.
+      - url: https://waseda.repo.nii.ac.jp/oai?verb=ListMetadataFormats
+        status: 200
+        note: 'Seven formats: jpcoar_2.0, jpcoar_1.0, jpcoar, jpcoar_v1, oai_dc, ddi, lom.'
+      - url: https://api-ap.hosted.exlibrisgroup.com/view/sru/81SOKEI_INST?version=1.2&operation=explain
+        status: 404
+        note: SERVICE_NOT_FOUND. Alma SRU is not enabled for Waseda; the June claim of an SRU interface is unverifiable.
+      - url: https://waseda.primo.exlibrisgroup.com/discovery/search?vid=81SOKEI_WUNI:WINE
+        status: 200
+        note: Primo VE discovery UI (SPA shell). Ex Libris tenancy, not a Waseda contract.
+      - url: https://api.ror.org/v2/organizations/00ntfnx83
+        status: 200
+        note: ROR registration confirmed; fundref 501100004423, GRID grid.5290.e, ISNI 0000 0004 1936 9975.
+      - url: https://api.crossref.org/funders/501100004423
+        status: 200
+        note: Crossref Open Funder Registry, 1,458 works. Crossref members query returns 0 — not a depositing member.
+      - url: https://api.datacite.org/providers?query=Waseda
+        status: 200
+        note: meta.total 0. No DataCite provider account under Waseda's name.
+      - url: https://w-rdb.waseda.jp/
+        status: 200
+        note: Waseda Researcher Database, institution-operated HTML on waseda.jp. No machine-readable interface found.
+      - url: https://www.wsl.waseda.jp/syllabus/JAA101.php
+        status: 200
+        note: Institution-operated syllabus search. HTML only; no API.
+      - url: https://api.wasedatime.com
+        status: 403
+        note: >-
+          Unofficial student project backend. No evidence of institutional endorsement; not credited
+          and github.com/wasedatime removed from common[] as a false GitHubOrganization claim.
+      - url: https://www.waseda.jp/robots.txt
+        status: 403
+        note: >-
+          www.waseda.jp WAF answers /robots.txt, /llms.txt and /.well-known/security.txt with a 403
+          page rather than a 404, so those are unreadable rather than confirmed absent.
+      - url: https://researchers.waseda.jp/
+        status: 0
+        note: Connection timed out at 60s on 2026-09-01. Dead; not emitted as a pointer.
+      - url: https://www.waseda.jp/top/en/privacy-policy
+        status: 200
+        note: Official English privacy policy (the previously plausible /top/en/privacy is a 404).
+      - url: https://www.waseda.jp/top/news/89507?lng=en
+        status: 200
+        note: Official institutional statement on generative AI use. Recorded as AIPolicy.
