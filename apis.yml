@@ -171,6 +171,7 @@ apis:
       - type: Examples
         url: examples/waseda-examples.yml
   - aid: waseda:shibboleth-idp
+    x-published: false
     name: Waseda Identity Provider (Shibboleth SAML 2.0)
     x-operator: institution
     description: >-
